@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edulycee-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: edulycee
+  template:
+    metadata:
+      labels:
+        app: edulycee
+    spec:
+      containers:
+      - name: edulycee
+        image: edulycee-flutter
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
