@@ -10,6 +10,7 @@ import '../../blocs/communication/communication_bloc.dart';
 import '../../blocs/notes/notes_bloc.dart';
 import '../../themes/app_theme.dart';
 import 'appel_page.dart';
+import 'creer_devoir_page.dart';
 import 'messagerie_page.dart';
 import 'saisie_notes_page.dart';
 
@@ -65,6 +66,7 @@ class _ProfesseurDashboardPageState extends State<ProfesseurDashboardPage> {
                 ],
                 child: const AppelPage(),
               ),
+              const CreerDevoirPage(),
               MultiBlocProvider(
                 providers: [
                   BlocProvider(create: (_) => sl<CommunicationBloc>()),
@@ -90,6 +92,10 @@ class _ProfesseurDashboardPageState extends State<ProfesseurDashboardPage> {
                   activeIcon: Icon(Icons.how_to_reg),
                   label: 'Appel'),
               BottomNavigationBarItem(
+                  icon: Icon(Icons.assignment_outlined),
+                  activeIcon: Icon(Icons.assignment),
+                  label: 'Devoirs'),
+              BottomNavigationBarItem(
                   icon: Icon(Icons.chat_outlined),
                   activeIcon: Icon(Icons.chat),
                   label: 'Messages'),
@@ -104,7 +110,8 @@ class _ProfesseurDashboardPageState extends State<ProfesseurDashboardPage> {
     switch (_currentIndex) {
       case 1: return 'Saisie Notes';
       case 2: return 'Faire l\'appel';
-      case 3: return 'Messages';
+      case 3: return 'Devoirs & Examens';
+      case 4: return 'Messages';
       default: return 'Mes Classes';
     }
   }

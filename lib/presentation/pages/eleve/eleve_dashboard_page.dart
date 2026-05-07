@@ -6,8 +6,7 @@ import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
 import '../../blocs/absences/absences_bloc.dart';
-import '../../blocs/communication/communication_bloc.dart';
-import '../../blocs/emploi_du_temps/emploi_du_temps_bloc.dart';
+import '../../blocs/emploi_du_temps/emploi_du_temps_bloc.dart';import '../../blocs/emploi_du_temps/emploi_du_temps_bloc.dart';
 import '../../blocs/notes/notes_bloc.dart';
 import '../../themes/app_theme.dart';
 import 'absences_page.dart';
@@ -59,10 +58,7 @@ class _EleveDashboardPageState extends State<EleveDashboardPage> {
             create: (_) => sl<EmploiDuTempsBloc>(),
             child: EmploiDuTempsPage(classeId: user?.classeId ?? 'classe-001'),
           ),
-          BlocProvider(
-            create: (_) => sl<CommunicationBloc>(),
-            child: DevoirsPage(classeId: user?.classeId ?? 'classe-001'),
-          ),
+          DevoirsPage(classeId: user?.classeId ?? 'classe-001'),
           BlocProvider(
             create: (_) => sl<AbsencesBloc>()
               ..add(AbsencesLoadByEleve(user?.uid ?? 'eleve-001')),

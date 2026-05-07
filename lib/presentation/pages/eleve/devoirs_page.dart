@@ -1,37 +1,58 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/constants/app_constants.dart';
 import '../../../domain/entities/devoir.dart';
-import '../../blocs/communication/communication_bloc.dart';
-import '../../blocs/communication/communication_event.dart';
-import '../../blocs/communication/communication_state.dart';
+import '../../blocs/auth/auth_bloc.dart';
+import '../../blocs/auth/auth_state.dart';
 import '../../themes/app_theme.dart';
 import '../../widgets/app_loading.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class DevoirsPage extends StatefulWidget {
+class DevoirsPage extends StatelessWidget {
   final String classeId;
   const DevoirsPage({super.key, required this.classeId});
 
   @override
-  State<DevoirsPage> createState() => _DevoirsPageState();
-}
-
-class _DevoirsPageState extends State<DevoirsPage> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<CommunicationBloc>().add(LoadDevoirs(widget.classeId));
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CommunicationBloc, CommunicationState>(
-      builder: (context, state) {
-        if (state is CommunicationLoading) return const AppLoading();
-        if (state is DevoirsLoaded) {
-          return _DevoirsList(devoirs: state.devoirs);
+    final authState = context.watch<AuthBloc>().state;
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection(AppConstants.devoirsCollection)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const AppLoading();
         }
-        return const AppLoading();
+        if (snapshot.hasError) {
+          return Center(
+              child: Text('Erreur: ${snapshot.error}',
+                  style: const TextStyle(color: AppColors.error)));
+        }
+
+        final devoirs = <Devoir>[];
+        for (final doc in snapshot.data?.docs ?? []) {
+          final d = doc.data() as Map<String, dynamic>;
+          final dateRendu =
+              (d['dateRendu'] as Timestamp?)?.toDate() ?? DateTime.now();
+          final datePub =
+              (d['datePublication'] as Timestamp?)?.toDate() ??
+                  DateTime.now();
+          devoirs.add(Devoir(
+            id: doc.id,
+            titre: d['titre'] ?? '',
+            description: d['description'] ?? '',
+            matiereId: d['matiereId'] ?? '',
+            classeId: d['classeId'] ?? '',
+            professeurId: d['professeurId'] ?? '',
+            datePublication: datePub,
+            dateRendu: dateRendu,
+            renduEnLigne: d['renduEnLigne'] ?? false,
+          ));
+        }
+
+        return _DevoirsList(devoirs: devoirs);
       },
     );
   }
